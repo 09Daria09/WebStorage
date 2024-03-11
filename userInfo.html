@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Информация о пользователе</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        form {
+            background: #fff;
+            padding: 50px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="tel"],
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            background-color: #5cb85c;
+            color: white;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        button:nth-child(2) {
+            background-color: #d9534f;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .error {
+            color: red;
+            margin-bottom: 15px;
+        }
+        .email-display {
+            margin: 10px;
+            color: rgb(62, 195, 22);
+        }
+    </style>
+    <script>   
+        window.onload = function() {
+    if(!localStorage.getItem('email')) {
+        window.location.href = 'registration.html';
+    } else {
+        showUserEmail();
+        fillFormWithSavedData();
+    }
+};
+
+function showUserEmail() {
+    const email = localStorage.getItem('email');
+    if (email) {
+        document.getElementById('userEmail').textContent = `Электронная почта: ${email}`;
+    }
+}
+
+function fillFormWithSavedData() {
+    document.getElementById('firstName').value = localStorage.getItem('firstName') || '';
+    document.getElementById('lastName').value = localStorage.getItem('lastName') || '';
+    document.getElementById('birthYear').value = localStorage.getItem('birthYear') || '';
+    document.getElementById('gender').value = localStorage.getItem('gender') || 'male';
+    document.getElementById('phone').value = localStorage.getItem('phone') || '';
+    document.getElementById('skype').value = localStorage.getItem('skype') || '';
+}
+
+function saveUserInfo() {
+    var firstName = document.getElementById('firstName').value;
+            var lastName = document.getElementById('lastName').value;
+            var birthYear = document.getElementById('birthYear').value;
+            var currentYear = new Date().getFullYear();
+            var phone = document.getElementById('phone').value;
+            var phonePattern = /^[\d\s().-]+$/;
+            var errors = [];
+
+            if(firstName === '' || firstName.length > 20) {
+                errors.push('Имя не может быть пустым и должно содержать не более 20 символов.');
+            }
+            if(lastName === '' || lastName.length > 20) {
+                errors.push('Фамилия не может быть пустой и должна содержать не более 20 символов.');
+            }
+            if(birthYear < 1900 || birthYear > currentYear) {
+                errors.push('Некорректный год рождения.');
+            }
+            if(phone && !phonePattern.test(phone)) {
+                errors.push('Некорректный номер телефона.');
+            }
+
+            if(errors.length > 0) {
+                alert(errors.join('\n'));
+                return false;
+            }
+
+            localStorage.setItem('firstName', firstName);
+            localStorage.setItem('lastName', lastName);
+            localStorage.setItem('birthYear', birthYear);
+            localStorage.setItem('gender', document.getElementById('gender').value);
+            localStorage.setItem('phone', phone);
+            localStorage.setItem('skype', document.getElementById('skype').value);
+
+            alert('Информация сохранена!');
+}
+
+function exit() {
+    localStorage.clear();
+    window.location.href = 'registration.html';
+}
+
+   </script>
+</head>
+<body>
+    <form onsubmit="return false;">
+        <h2>Информация о пользователе</h2>
+        <div class="email-display" id="userEmail"></div>
+        <label for="firstName">Имя:</label>
+        <input type="text" id="firstName" maxlength="20" required>
+        
+        <label for="lastName">Фамилия:</label>
+        <input type="text" id="lastName" maxlength="20" required>
+        
+        <label for="birthYear">Год рождения:</label>
+        <input type="number" id="birthYear" min="1900" required>
+        
+        <label for="gender">Пол:</label>
+        <select id="gender">
+            <option value="male">Мужской</option>
+            <option value="female">Женский</option>
+        </select>
+        
+        <label for="phone">Номер телефона:</label>
+        <input type="tel" id="phone" pattern="[\d\s().-]{10,12}">
+        
+        <label for="skype">Skype:</label>
+        <input type="text" id="skype">
+        
+        <button onclick="saveUserInfo()">Save</button>
+        <button onclick="exit()">Exit</button>
+    </form>
+</body>
+</html>
